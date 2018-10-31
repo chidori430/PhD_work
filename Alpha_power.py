@@ -1,22 +1,31 @@
 # -*- coding: utf-8 -*-
 """
-Spyder Editor
+Created on Thu Oct 25 11:59:15 2018
 
-This is a temporary script file.
+@author: micha
 """
+import math
 
-def length(L_base,V_base,V_threshold,voltage,alpha):
+def pipe_line_len(base_voltage,transient_voltage,voltage,base_length,alpha):
     
-    return pipe_length
- 
-def num_of_pipes(V_base,V_threshold,voltage,alpha):
+    length = base_length*((pow(base_voltage - transient_voltage,alpha)*voltage)/(pow(voltage-transient_voltage,alpha)*base_voltage))
     
+    return length
+
+def num_of_pipe_stages(voltage,alpha,base_voltage,transient_voltage):
+
+    n = ((voltage*pow(base_voltage-transient_voltage,alpha))/(base_voltage*pow(voltage - transient_voltage,alpha))) - 1
+         
     return n
 
-def max_frequency(voltage,V_threshold):
+def alpha_power(dyn_power_base,voltage,base_voltage,frequency,stat_pwr_base,n,dyn_pwr_latch,stat_pwr_latch):
     
-    return freq
+    a_pwr = (dyn_power_base*((pow(voltage,2))/(pow(base_voltage,2)))*frequency) 
+    + ((voltage/base_voltage)*stat_pwr_base) + n*(((pow(voltage,2)/pow(base_voltage,2))*frequency) 
+    + ((voltage/base_voltage)*stat_pwr_latch))
 
-def alpha_power(Dyn_Pwr_base,voltage,frequency,V_base,Static_Pwr_base,num_of_pipes,Dyn_Pwr_latch,Static_pwr_latch):
-    
-    return a_power
+    return a_pwr
+
+
+
+print(pow(2,300))
