@@ -7,17 +7,21 @@ Created on Thu Oct 25 11:59:15 2018
 import math
 import matplotlib.pyplot as plt
 
-def pipe_line_len(base_voltage,transient_voltage,voltage,base_length,alpha):
+def pipe_line_len(base_voltage,threshold_voltage,voltage,base_length,alpha):
     
-    length = base_length*((pow(base_voltage - transient_voltage,alpha)*voltage)/(pow(voltage-transient_voltage,alpha)*base_voltage))
+    length = base_length*((pow(base_voltage - threshold_voltage,alpha)*voltage)/(pow(voltage-threshold_voltage,alpha)*base_voltage))
     
     return length
 
-def num_of_pipe_stages(voltage,alpha,base_voltage,transient_voltage):
+def num_of_pipe_stages(voltage,alpha,base_voltage,threshold_voltage):
 
-    n = ((voltage*pow(base_voltage-transient_voltage,alpha))/(base_voltage*pow(voltage - transient_voltage,alpha))) - 1
+    n = ((voltage*pow(base_voltage-threshold_voltage,alpha))/(base_voltage*pow(voltage - threshold_voltage,alpha))) - 1
          
     return n
+
+def max_frequency(voltage,threshold_voltage,alpha):
+    max_freq = pow(voltage - threshold_voltage,alpha)/voltage
+    return max_freq
 
 def alpha_power(dyn_power_base,voltage,base_voltage,frequency,stat_pwr_base,n,dyn_pwr_latch,stat_pwr_latch):
     
@@ -26,7 +30,6 @@ def alpha_power(dyn_power_base,voltage,base_voltage,frequency,stat_pwr_base,n,dy
     + ((voltage/base_voltage)*stat_pwr_latch))
 
     return a_pwr
-
 base_voltage = 1.2
 voltage = 0.7
 transient_voltage = 0.6
