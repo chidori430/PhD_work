@@ -16,8 +16,8 @@ from IPython import get_ipython
 
 #length of the pipeline which includes all stages
 def pipe_line_len(base_voltage, threshold_voltage, voltage, base_length, alpha):
-    length = base_length * ((pow(base_voltage - threshold_voltage, alpha) * voltage) / (
-                pow(voltage - threshold_voltage, alpha) * base_voltage))
+    length = base_length * ((pow(base_voltage - threshold_voltage, alpha) * voltage) 
+    / (pow(voltage - threshold_voltage, alpha) * base_voltage))
 
     return length
 
@@ -43,10 +43,13 @@ def alpha_power(dyn_power_base, voltage, base_voltage, frequency, stat_pwr_base,
 
 base_length = 1
 base_voltage = 1.8 
+tbv = base_voltage
 bv_list = []
-voltage = 1.6
+voltage = 1.7
+tv = voltage 
 v_list = [] 
 threshold_voltage = 0.2 # has to be lower then voltage
+ttv = threshold_voltage
 tv_list = []
 alpha = 2.0 # can vary
 dyn_pwr_base = 1.0
@@ -74,113 +77,117 @@ stage_num2 = []
 a_pwr2 = []
 
 
-while voltage > 1.0 :
-    voltage = voltage - 0.1
-    freq = max_frequency(voltage,threshold_voltage,alpha)
-    p_len = pipe_line_len(base_voltage,threshold_voltage,voltage,base_length,alpha) 
-    nps = num_of_pipe_stages(voltage, alpha,base_voltage,threshold_voltage)
-    pwr = alpha_power(dyn_pwr_base,voltage,base_voltage,frequency,stat_pwr_base,n,dyn_pwr_latch,stat_pwr_latch)
-    v_list.append(voltage)
-    p_length.append(p_len)
-    freq_list.append(freq)
-    stage_num.append(nps)
-    a_pwr.append(pwr)
-
-plt.figure(1)
-print(v_list, freq_list)
-plt.subplot(411)
-plt.plot(v_list,freq_list, marker ='o', color = 'r')
-plt.tight_layout()
-plt.ylabel('Frequency')
-plt.xlabel('Voltage')
-
-plt.subplot(412)
-plt.plot(v_list,p_length,marker ='o', color ='g')
-plt.tight_layout()
-plt.ylabel('Pipe Line Length')
-plt.xlabel('Voltage')
-
-plt.subplot(413)
-plt.plot(v_list,stage_num, marker ='o',color ='b')
-plt.tight_layout()
-plt.ylabel('# of Pipeline stages')
-plt.xlabel('Voltage')
-
-plt.subplot(414)
-plt.plot(v_list,a_pwr, marker ='o',color ='c')
-plt.tight_layout()
-plt.ylabel(' Alpha Power')
-plt.xlabel('Voltage')
-
-
-plt.show()
-
-
-
-
-while threshold_voltage < 1.0 :
-    threshold_voltage = threshold_voltage + 0.1
-    freq1 = max_frequency(voltage,threshold_voltage,alpha)
-    p_len1 = pipe_line_len(base_voltage,threshold_voltage,voltage,base_length,alpha) 
-    nps1 = num_of_pipe_stages(voltage, alpha,base_voltage,threshold_voltage)
-    tv_list.append(threshold_voltage)
-    p_length1.append(p_len1)
-    freq_list1.append(freq1)
-    stage_num1.append(nps1)
-
-plt.figure(2)
-print(tv_list, freq_list1)
-plt.subplot(311)
-plt.plot(tv_list,freq_list1, marker ='o', color = 'r')
-plt.tight_layout()
-plt.ylabel('Frequency')
-plt.xlabel('Threshold Voltage')
-
-plt.subplot(312)
-plt.plot(tv_list,p_length1,marker ='o', color ='g')
-plt.tight_layout()
-plt.ylabel('Pipe Line Length')
-plt.xlabel('Threshold Voltage')
-
-plt.subplot(313)
-plt.plot(tv_list,stage_num1, marker ='o',color ='b')
-plt.tight_layout()
-plt.ylabel('# of Pipeline stages')
-plt.xlabel('Threshold Voltage')
-
-plt.show()
-
-
-while base_voltage > 1.0 :
-    base_voltage = base_voltage - 0.1
-
-    p_len2 = pipe_line_len(base_voltage,threshold_voltage,voltage,base_length,alpha) 
-    nps2 = num_of_pipe_stages(voltage, alpha,base_voltage,threshold_voltage)
-    pwr2 = alpha_power(dyn_pwr_base,voltage,base_voltage,frequency,stat_pwr_base,n,dyn_pwr_latch,stat_pwr_latch)
-    bv_list.append(base_voltage)
-    p_length2.append(p_len2)
-    stage_num2.append(nps2)
-    a_pwr2.append(pwr2)
+#while tv > 1.0 :
+#    tv = tv - (1/10)
+#    freq = max_frequency(tv,threshold_voltage,alpha)
+#    p_len = pipe_line_len(base_voltage,threshold_voltage,tv,base_length,alpha) 
+#    nps = num_of_pipe_stages(tv, alpha,base_voltage,threshold_voltage)
+#    pwr = alpha_power(dyn_pwr_base,tv,base_voltage,frequency,stat_pwr_base,n,dyn_pwr_latch,stat_pwr_latch)
+#    v_list.append(tv)
+#    p_length.append(p_len)
+#    freq_list.append(freq)
+#    stage_num.append(nps)
+#    a_pwr.append(pwr)
+#
+#plt.figure(1)
+#plt.subplot(411)
+#plt.plot(v_list,freq_list, marker ='o', color = 'r')
+#plt.tight_layout()
+#plt.ylabel('Frequency')
+#plt.xlabel('Voltage')
+#
+#plt.subplot(412)
+#plt.plot(v_list,p_length,marker ='o', color ='g')
+#plt.tight_layout()
+#plt.ylabel('Pipe Line Length')
+#plt.xlabel('Voltage')
+#
+#plt.subplot(413)
+#plt.plot(v_list,stage_num, marker ='o',color ='b')
+#plt.tight_layout()
+#plt.ylabel('# of Pipeline stages')
+#plt.xlabel('Voltage')
+#
+#plt.subplot(414)
+#plt.plot(v_list,a_pwr, marker ='o',color ='c')
+#plt.tight_layout()
+#plt.ylabel(' Alpha Power')
+#plt.xlabel('Voltage')
+#
+#
+#plt.show()
+#
+#
+#counter  =0
+#
+#while ttv < 1 :
+#    tv_list.append(ttv)
+#    ttv = ttv + (1/10)
+#    freq1 = max_frequency(voltage,ttv,alpha)
+#    p_len1 = pipe_line_len(base_voltage,ttv,voltage,base_length,alpha) 
+#    nps1 = num_of_pipe_stages(voltage, alpha,base_voltage,ttv)
+#    
+#    p_length1.append(p_len1)
+#    freq_list1.append(freq1)
+#    stage_num1.append(nps1)
+#
+#plt.figure(2)
+#plt.subplot(311)
+#plt.plot(tv_list,freq_list1, marker ='o', color = 'r')
+#plt.tight_layout()
+#plt.ylabel('Frequency')
+#plt.xlabel('Threshold Voltage')
+#
+#plt.subplot(312)
+#plt.plot(tv_list,p_length1,marker ='o', color ='g')
+#plt.tight_layout()
+#plt.ylabel('Pipe Line Length')
+#plt.xlabel('Threshold Voltage')
+#
+#plt.subplot(313)
+#plt.plot(tv_list,stage_num1, marker ='o',color ='b')
+#plt.tight_layout()
+#plt.ylabel('# of Pipeline stages')
+#plt.xlabel('Threshold Voltage')
+#
+#plt.show()
 
 
-plt.figure(3)
-plt.subplot(311)
-plt.plot(bv_list,p_length2,marker ='o', color ='g')
-plt.tight_layout()
-plt.ylabel('Pipe Line Length')
-plt.xlabel('Base Voltage')
 
-plt.subplot(312)
-plt.plot(bv_list,stage_num2, marker ='o',color ='b')
-plt.tight_layout()
-plt.ylabel('# of Pipeline stages')
-plt.xlabel('Base Voltage')
 
-plt.subplot(313)
-plt.plot(bv_list,a_pwr2, marker ='o',color ='c')
-plt.tight_layout()
-plt.ylabel(' Alpha Power')
-plt.xlabel('Base Voltage')
+print(np.linspace(1,voltage,50,endpoint = False))
+print(np.linspace(threshold_voltage,0.99,50,endpoint = False))
+    
+#while tbv > 1.0 :
+#    tbv = tbv - 0.1
+#
+#    p_len2 = pipe_line_len(tbv,threshold_voltage,voltage,base_length,alpha) 
+#    nps2 = num_of_pipe_stages(voltage, alpha,tbv,threshold_voltage)
+#    pwr2 = alpha_power(dyn_pwr_base,voltage,tbv,frequency,stat_pwr_base,n,dyn_pwr_latch,stat_pwr_latch)
+#    bv_list.append(tbv)
+#    p_length2.append(p_len2)
+#    stage_num2.append(nps2)
+#    a_pwr2.append(pwr2)
+#
+#
+#plt.figure(3)
+#plt.subplot(311)
+#plt.plot(bv_list,p_length2,marker ='o', color ='g')
+#plt.tight_layout()
+#plt.ylabel('Pipe Line Length')
+#plt.xlabel('Base Voltage')
+#
+#plt.subplot(312)
+#plt.plot(bv_list,stage_num2, marker ='o',color ='b')
+#plt.tight_layout()
+#plt.ylabel('# of Pipeline stages')
+#plt.xlabel('Base Voltage')
+#
+#plt.subplot(313)
+#plt.plot(bv_list,a_pwr2, marker ='o',color ='c')
+#plt.tight_layout()
+#plt.ylabel(' Alpha Power')
+#plt.xlabel('Base Voltage')
 
 
 plt.show()
