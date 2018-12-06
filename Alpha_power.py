@@ -6,12 +6,15 @@ Created on Thu Oct 25 11:59:15 2018
 """
 
 """ X-series core voltage ranges from 1.55 to 1.8 volts
-    X-series inclues the: i7-7740X,i7-7800X,i7-7820X,i9-7900X,i97920X
+    X-series inclues the: i7-7740X,i7-7800X,i7-7820X,i9-7900X,i9-7920X
+    static and dynamic powre consumption found here https://www.techspot.com/review/1442-intel-kaby-lake-x/page4.html
 """
     
 import math
 import matplotlib.pyplot as plt
+from matplotlib import cm
 import numpy as np
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from IPython import get_ipython
 
 #length of the pipeline which includes all stages
@@ -52,10 +55,12 @@ threshold_voltage = 0.2 # has to be lower then voltage
 ttv = threshold_voltage
 tv_list = []
 alpha = 2.0 # can vary
-dyn_pwr_base = 1.0
-stat_pwr_base = 1.0 
-dyn_pwr_latch = 1.0
-stat_pwr_latch = 1.0 
+# base pwr ratio = 888/323 with 888 being dynamic and 323 being static 
+# This was the average across the x series chips 
+dyn_pwr_base = 888/(888+323)
+stat_pwr_base = 323/(888+323)
+dyn_pwr_latch = 0.9
+stat_pwr_latch = 0.1 
 n = 1.0
 frequency =1.0
 
@@ -151,13 +156,21 @@ a_pwr2 = []
 #plt.xlabel('Threshold Voltage')
 #
 #plt.show()
+v_list = np.linspace(1,voltage,50,endpoint = False)
+tv_list = np.linspace(threshold_voltage,0.99,50,endpoint = False)
+i = 0
+while i < len(v_list):
+    p_length.append(pipe_line_len(base_voltage, tv_list[i], v_list[i], base_length, alpha))   
+    a_pwr.append(alpha_power(dyn_pwr_base, v_list[i], base_voltage, frequency, stat_pwr_base, n, dyn_pwr_latch, stat_pwr_latch))
+    max_frequency(v_list[i],tv_list[i],alpha)
+    stage_num.append(num_of_pipe_stages(v_list[i],alpha,base_voltage,tv_list[i]))
+    i = i +1
 
 
 
 
-print(np.linspace(1,voltage,50,endpoint = False))
-print(np.linspace(threshold_voltage,0.99,50,endpoint = False))
-    
+
+
 #while tbv > 1.0 :
 #    tbv = tbv - 0.1
 #
@@ -190,4 +203,4 @@ print(np.linspace(threshold_voltage,0.99,50,endpoint = False))
 #plt.xlabel('Base Voltage')
 
 
-plt.show()
+#plt.show()
