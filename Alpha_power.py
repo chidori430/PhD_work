@@ -16,7 +16,8 @@ from matplotlib import cm
 import numpy as np
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from IPython import get_ipython
-
+import itertools
+from mpl_toolkits.mplot3d import Axes3D
 #length of the pipeline which includes all stages
 def pipe_line_len(base_voltage, threshold_voltage, voltage, base_length, alpha):
     length = base_length * ((pow(base_voltage - threshold_voltage, alpha) * voltage) 
@@ -158,18 +159,44 @@ a_pwr2 = []
 #plt.show()
 v_list = np.linspace(1,voltage,50,endpoint = False)
 tv_list = np.linspace(threshold_voltage,0.99,50,endpoint = False)
-i = 0
-while i < len(v_list):
-    p_length.append(pipe_line_len(base_voltage, tv_list[i], v_list[i], base_length, alpha))   
-    a_pwr.append(alpha_power(dyn_pwr_base, v_list[i], base_voltage, frequency, stat_pwr_base, n, dyn_pwr_latch, stat_pwr_latch))
-    max_frequency(v_list[i],tv_list[i],alpha)
-    stage_num.append(num_of_pipe_stages(v_list[i],alpha,base_voltage,tv_list[i]))
-    i = i +1
+#i = 0
+#while i < len(v_list):
+#    p_length.append(pipe_line_len(base_voltage, tv_list[i], v_list[i], base_length, alpha))   
+#    a_pwr.append(alpha_power(dyn_pwr_base, v_list[i], base_voltage, frequency, stat_pwr_base, n, dyn_pwr_latch, stat_pwr_latch))
+#    max_frequency(v_list[i],tv_list[i],alpha)
+#    stage_num.append(num_of_pipe_stages(v_list[i],alpha,base_voltage,tv_list[i]))
+#    i = i +1
+X =[]
+Y =[]
 
+for x in itertools.product(v_list,tv_list):
+       
+    a_pwr.append(alpha_power(dyn_pwr_base, x[0], base_voltage, frequency, stat_pwr_base, n, dyn_pwr_latch, stat_pwr_latch))
+    max_frequency(x[0],x[1],alpha)
+    stage_num.append(num_of_pipe_stages(x[0],alpha,base_voltage,x[1]))   
+    X.append(x[0])
+    Y.append(x[1])
+   
 
+fig = plt.figure()
+ax = fig.gca(projection='3d')
 
+# Make data.
+X, Y = np.meshgrid(X, Y)
+p_length.append(pipe_line_len(base_voltage, Y, X, base_length, alpha))
+# Plot the surface.
+surf = ax.plot_surface(X, Y, p_length, cmap=cm.coolwarm,
+                       linewidth=0, antialiased=False)
 
+# Customize the z axis.
+#ax.set_zlim(-1.01, 1.01)
+#ax.zaxis.set_major_locator(LinearLocator(10))
+#ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 
+# Add a color bar which maps values to colors.
+#fig.colorbar(surf, shrink=0.5, aspect=5)
+
+plt.show()
 
 #while tbv > 1.0 :
 #    tbv = tbv - 0.1
