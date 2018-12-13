@@ -20,21 +20,21 @@ import itertools
 from mpl_toolkits.mplot3d import Axes3D
 #length of the pipeline which includes all stages
 def pipe_line_len(base_voltage, threshold_voltage, voltage, base_length, alpha):
-    length = base_length * ((pow(base_voltage - threshold_voltage, alpha) * voltage) 
-    / (pow(voltage - threshold_voltage, alpha) * base_voltage))
+    length = base_length * ((pow((base_voltage - threshold_voltage), alpha) * voltage) 
+    / (pow((voltage - threshold_voltage), alpha) * base_voltage))
 
     return length
 
 # number of additional pipeline stages needed
 def num_of_pipe_stages(voltage, alpha, base_voltage, threshold_voltage):
-    n = ((voltage * pow(base_voltage - threshold_voltage, alpha)) / (
+    n = ((voltage * pow((base_voltage - threshold_voltage), alpha)) / (
                 base_voltage * pow(voltage - threshold_voltage, alpha))) - 1
 
     return n
 
 
 def max_frequency(voltage, threshold_voltage, alpha):
-    max_freq = pow(voltage - threshold_voltage, alpha) / voltage
+    max_freq = pow((voltage - threshold_voltage), alpha) / voltage
     return max_freq
 
 
@@ -55,10 +55,11 @@ v_list = []
 threshold_voltage = 0.2 # has to be lower then voltage
 ttv = threshold_voltage
 tv_list = []
-alpha = 2.0 # can vary
+alpha = 1.3 # can vary
 # base pwr ratio = 888/323 with 888 being dynamic and 323 being static 
 # This was the average across the x series chips 
 dyn_pwr_base = 888/(888+323)
+print(dyn_pwr_base)
 stat_pwr_base = 323/(888+323)
 dyn_pwr_latch = 0.9
 stat_pwr_latch = 0.1 
@@ -83,151 +84,119 @@ stage_num2 = []
 a_pwr2 = []
 
 
-#while tv > 1.0 :
-#    tv = tv - (1/10)
-#    freq = max_frequency(tv,threshold_voltage,alpha)
-#    p_len = pipe_line_len(base_voltage,threshold_voltage,tv,base_length,alpha) 
-#    nps = num_of_pipe_stages(tv, alpha,base_voltage,threshold_voltage)
-#    pwr = alpha_power(dyn_pwr_base,tv,base_voltage,frequency,stat_pwr_base,n,dyn_pwr_latch,stat_pwr_latch)
-#    v_list.append(tv)
-#    p_length.append(p_len)
-#    freq_list.append(freq)
-#    stage_num.append(nps)
-#    a_pwr.append(pwr)
-#
-#plt.figure(1)
-#plt.subplot(411)
-#plt.plot(v_list,freq_list, marker ='o', color = 'r')
-#plt.tight_layout()
-#plt.ylabel('Frequency')
-#plt.xlabel('Voltage')
-#
-#plt.subplot(412)
-#plt.plot(v_list,p_length,marker ='o', color ='g')
-#plt.tight_layout()
-#plt.ylabel('Pipe Line Length')
-#plt.xlabel('Voltage')
-#
-#plt.subplot(413)
-#plt.plot(v_list,stage_num, marker ='o',color ='b')
-#plt.tight_layout()
-#plt.ylabel('# of Pipeline stages')
-#plt.xlabel('Voltage')
-#
-#plt.subplot(414)
-#plt.plot(v_list,a_pwr, marker ='o',color ='c')
-#plt.tight_layout()
-#plt.ylabel(' Alpha Power')
-#plt.xlabel('Voltage')
-#
-#
-#plt.show()
-#
-#
-#counter  =0
-#
-#while ttv < 1 :
-#    tv_list.append(ttv)
-#    ttv = ttv + (1/10)
-#    freq1 = max_frequency(voltage,ttv,alpha)
-#    p_len1 = pipe_line_len(base_voltage,ttv,voltage,base_length,alpha) 
-#    nps1 = num_of_pipe_stages(voltage, alpha,base_voltage,ttv)
-#    
-#    p_length1.append(p_len1)
-#    freq_list1.append(freq1)
-#    stage_num1.append(nps1)
-#
-#plt.figure(2)
-#plt.subplot(311)
-#plt.plot(tv_list,freq_list1, marker ='o', color = 'r')
-#plt.tight_layout()
-#plt.ylabel('Frequency')
-#plt.xlabel('Threshold Voltage')
-#
-#plt.subplot(312)
-#plt.plot(tv_list,p_length1,marker ='o', color ='g')
-#plt.tight_layout()
-#plt.ylabel('Pipe Line Length')
-#plt.xlabel('Threshold Voltage')
-#
-#plt.subplot(313)
-#plt.plot(tv_list,stage_num1, marker ='o',color ='b')
-#plt.tight_layout()
-#plt.ylabel('# of Pipeline stages')
-#plt.xlabel('Threshold Voltage')
-#
-#plt.show()
-v_list = np.linspace(1,voltage,50,endpoint = False)
-tv_list = np.linspace(threshold_voltage,0.99,50,endpoint = False)
-#i = 0
-#while i < len(v_list):
-#    p_length.append(pipe_line_len(base_voltage, tv_list[i], v_list[i], base_length, alpha))   
-#    a_pwr.append(alpha_power(dyn_pwr_base, v_list[i], base_voltage, frequency, stat_pwr_base, n, dyn_pwr_latch, stat_pwr_latch))
-#    max_frequency(v_list[i],tv_list[i],alpha)
-#    stage_num.append(num_of_pipe_stages(v_list[i],alpha,base_voltage,tv_list[i]))
-#    i = i +1
+v_list = np.linspace(1,voltage,25,endpoint = False)
+tv_list = np.linspace(threshold_voltage,0.99,25,endpoint = False)
+
 X =[]
 Y =[]
-
+n =[]
 for x in itertools.product(v_list,tv_list):
-       
-    a_pwr.append(alpha_power(dyn_pwr_base, x[0], base_voltage, frequency, stat_pwr_base, n, dyn_pwr_latch, stat_pwr_latch))
-    max_frequency(x[0],x[1],alpha)
-    stage_num.append(num_of_pipe_stages(x[0],alpha,base_voltage,x[1]))   
+    
     X.append(x[0])
     Y.append(x[1])
-   
-
-fig = plt.figure()
-ax = fig.gca(projection='3d')
-
-# Make data.
+    n.append(num_of_pipe_stages(x[0],alpha,base_voltage,x[1]))
 X, Y = np.meshgrid(X, Y)
-p_length.append(pipe_line_len(base_voltage, Y, X, base_length, alpha))
+p_length = (pipe_line_len(base_voltage, Y, X, base_length, alpha))   
+freq_list = (max_frequency(X,Y,alpha))
+stage_num = (num_of_pipe_stages(X,alpha,base_voltage,Y))       
+
+n = np.meshgrid(n)
+print(n)
+a_pwr = (alpha_power(dyn_pwr_base, X, base_voltage, frequency, stat_pwr_base, stage_num, dyn_pwr_latch, stat_pwr_latch))
+
+
+    
+
+   
+p_len_xmin, p_len_ymin = np.unravel_index(np.argmin(p_length), p_length.shape)
+p_len_xmax, p_len_ymax = np.unravel_index(np.argmax(p_length), p_length.shape)
+
+p_len_mi = (X[p_len_xmin,p_len_ymin], Y[p_len_xmin,p_len_ymin], p_length.min(),'Minimum Value for Pipeline length')
+p_len_ma = (X[p_len_xmax, p_len_ymax], Y[p_len_xmax, p_len_ymax], p_length.max(),'Maximum Value for Pipeline length')
+print(p_len_mi,'\n',p_len_ma,'\n')
+
+
+
+a_pwr_xmin, a_pwr_ymin = np.unravel_index(np.argmin(a_pwr), a_pwr.shape)
+a_pwr_xmax, a_pwr_ymax = np.unravel_index(np.argmax(a_pwr), a_pwr.shape)
+
+a_pwr_mi = (X[a_pwr_xmin,a_pwr_ymin], Y[a_pwr_xmin,a_pwr_ymin], a_pwr.min(),'Minimum Value for Power Consumption')
+a_pwr_ma = (X[a_pwr_xmax, a_pwr_ymax], Y[a_pwr_xmax, a_pwr_ymax], a_pwr.max(),'Maximum Value for Power Consumption')
+print(a_pwr_mi,'\n',a_pwr_ma,'\n')
+
+
+freq_xmin, freq_ymin = np.unravel_index(np.argmin(freq_list), freq_list.shape)
+freq_xmax, freq_ymax = np.unravel_index(np.argmax(freq_list), freq_list.shape)
+
+freq_mi = (X[freq_xmin,freq_ymin], Y[freq_xmin,freq_ymin], freq_list.min(),'Minimum Value for Frequency')
+freq_ma = (X[freq_xmax, freq_ymax], Y[freq_xmax, freq_ymax], freq_list.max(),'Maximum Value for Frequency')
+print(freq_mi,'\n',freq_ma,'\n')
+
+stage_num_xmin, stage_num_ymin = np.unravel_index(np.argmin(stage_num), stage_num.shape)
+stage_num_xmax, stage_num_ymax = np.unravel_index(np.argmax(stage_num), stage_num.shape)
+
+stage_num_mi = (X[stage_num_xmin,stage_num_ymin], Y[stage_num_xmin,stage_num_ymin], stage_num.min(),'Minimum Value for Number of stages')
+stage_num_ma = (X[stage_num_xmax, stage_num_ymax], Y[stage_num_xmax, stage_num_ymax], stage_num.max(),'Maximum Value for Number of stages')
+print(stage_num_mi,'\n',stage_num_ma,'\n')
+
+# frequency plots   
+fig = plt.figure()
+fig.set_size_inches(18.5, 10.5, forward=True)
+ax = fig.add_subplot(2, 2, 1, projection='3d')
 # Plot the surface.
-surf = ax.plot_surface(X, Y, p_length, cmap=cm.coolwarm,
+surf = ax.plot_surface(X, Y, freq_list, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
-
-# Customize the z axis.
-#ax.set_zlim(-1.01, 1.01)
-#ax.zaxis.set_major_locator(LinearLocator(10))
-#ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-
-# Add a color bar which maps values to colors.
-#fig.colorbar(surf, shrink=0.5, aspect=5)
+ax.set_xlabel('Voltage', fontsize=10)
+ax.set_ylabel('Threshold Voltage', fontsize=10)
+ax.set_zlabel('Frequency', fontsize=10)
+ax.set_title('Frequency')
+### Add a color bar which maps values to colors.
+fig.colorbar(surf, shrink=0.5, aspect=5)
 
 plt.show()
 
-#while tbv > 1.0 :
-#    tbv = tbv - 0.1
-#
-#    p_len2 = pipe_line_len(tbv,threshold_voltage,voltage,base_length,alpha) 
-#    nps2 = num_of_pipe_stages(voltage, alpha,tbv,threshold_voltage)
-#    pwr2 = alpha_power(dyn_pwr_base,voltage,tbv,frequency,stat_pwr_base,n,dyn_pwr_latch,stat_pwr_latch)
-#    bv_list.append(tbv)
-#    p_length2.append(p_len2)
-#    stage_num2.append(nps2)
-#    a_pwr2.append(pwr2)
-#
-#
-#plt.figure(3)
-#plt.subplot(311)
-#plt.plot(bv_list,p_length2,marker ='o', color ='g')
-#plt.tight_layout()
-#plt.ylabel('Pipe Line Length')
-#plt.xlabel('Base Voltage')
-#
-#plt.subplot(312)
-#plt.plot(bv_list,stage_num2, marker ='o',color ='b')
-#plt.tight_layout()
-#plt.ylabel('# of Pipeline stages')
-#plt.xlabel('Base Voltage')
-#
-#plt.subplot(313)
-#plt.plot(bv_list,a_pwr2, marker ='o',color ='c')
-#plt.tight_layout()
-#plt.ylabel(' Alpha Power')
-#plt.xlabel('Base Voltage')
+
+# alpha power plots   
+ax = fig.add_subplot(2, 2, 2, projection='3d')
+# Plot the surface.
+surf = ax.plot_surface(X, stage_num, a_pwr, cmap=cm.coolwarm,
+                       linewidth=0, antialiased=False)
+ax.set_xlabel('Voltage', fontsize=10)
+ax.set_ylabel('Pipeline depth factor', fontsize=10)
+ax.set_zlabel('Alpha Power', fontsize=10)
+ax.set_title('Power Consumption')
+### Add a color bar which maps values to colors.
+fig.colorbar(surf, shrink=0.5, aspect=5)
+
+plt.show()
 
 
-#plt.show()
+# Stage number plots   
+ax = fig.add_subplot(2, 2, 3, projection='3d')
+# Plot the surface.
+surf = ax.plot_surface(X, Y, stage_num, cmap=cm.coolwarm,
+                       linewidth=0, antialiased=False)
+ax.set_xlabel('Voltage', fontsize=10)
+ax.set_ylabel('Threshold Voltage', fontsize=10)
+ax.set_zlabel('Pipeline depth Factor', fontsize=10)
+ax.set_title('Pipeline depth Factor')
+### Add a color bar which maps values to colors.
+fig.colorbar(surf, shrink=0.5, aspect=5)
+
+plt.show()
+
+# Pipeline length plots   
+ax = fig.add_subplot(2, 2, 4, projection='3d')
+# Plot the surface.
+surf = ax.plot_surface(X, Y, p_length, cmap=cm.coolwarm,
+                       linewidth=0, antialiased=False)
+ax.set_xlabel('Voltage', fontsize=10)
+ax.set_ylabel('Threshold Voltage', fontsize=10)
+ax.set_zlabel('Pipeline delay factor', fontsize=10)
+ax.set_title('Pipeline delay factor')
+### Add a color bar which maps values to colors.
+fig.colorbar(surf, shrink=0.5, aspect=5)
+
+plt.show()
+
+fig.tight_layout()
