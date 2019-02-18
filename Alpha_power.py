@@ -7,9 +7,13 @@ Created on Thu Oct 25 11:59:15 2018
 
 """ X-series core voltage ranges from 1.55 to 1.8 volts
     X-series inclues the: i7-7740X,i7-7800X,i7-7820X,i9-7900X,i9-7920X
-    static and dynamic powre consumption found here https://www.techspot.com/review/1442-intel-kaby-lake-x/page4.html
+    static and dynamic power consumption found here https://www.techspot.com/review/1442-intel-kaby-lake-x/page4.html
 """
     
+"""All of the values generated are factors, not absolute values so if you get
+   a power consumption of 2 this means it is 2 * (original power consumption)
+
+"""
 import math
 import matplotlib.pyplot as plt
 from matplotlib import cm
@@ -101,7 +105,7 @@ freq_list = (max_frequency(X,Y,alpha))
 stage_num = (num_of_pipe_stages(X,alpha,base_voltage,Y))       
 
 n = np.meshgrid(n)
-print(n)
+#print(n)
 a_pwr = (alpha_power(dyn_pwr_base, X, base_voltage, frequency, stat_pwr_base, stage_num, dyn_pwr_latch, stat_pwr_latch))
 
 
